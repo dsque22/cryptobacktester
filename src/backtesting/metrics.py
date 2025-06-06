@@ -72,3 +72,111 @@ def format_metrics(metrics: Dict[str, float]) -> str:
     output.append(f"Total Trades: {metrics.get('total_trades', 0)}")
     
     return "\n".join(output)
+
+def create_performance_table(results, strategy_name: str = "Strategy") -> pd.DataFrame:
+    """Create a comprehensive performance metrics table."""
+    metrics = calculate_metrics(results)
+    
+    # Create structured table data
+    performance_data = [
+        # Returns & Profitability
+        ["Total Return", f"{metrics.get('total_return', 0):.2%}"],
+        ["Annualized Return", f"{metrics.get('total_return', 0) * (252 / len(results.returns) if len(results.returns) > 0 else 1):.2%}"],
+        ["Total Trades", f"{int(metrics.get('total_trades', 0))}"],
+        ["Winning Trades", f"{results.winning_trades}"],
+        ["Losing Trades", f"{results.losing_trades}"],
+        ["Win Rate", f"{metrics.get('win_rate', 0):.2%}"],
+        
+        # Risk Metrics
+        ["Sharpe Ratio", f"{metrics.get('sharpe_ratio', 0):.2f}"],
+        ["Sortino Ratio", f"{metrics.get('sortino_ratio', 0):.2f}"],
+        ["Calmar Ratio", f"{metrics.get('calmar_ratio', 0):.2f}"],
+        ["Max Drawdown", f"{metrics.get('max_drawdown', 0):.2%}"],
+        ["Volatility (Ann.)", f"{metrics.get('volatility', 0):.2%}"],
+        
+        # Trade Analysis
+        ["Profit Factor", f"{metrics.get('profit_factor', 0):.2f}"],
+        ["Average Trade", f"${metrics.get('avg_trade', 0):.2f}"],
+        ["Best Trade", f"${metrics.get('best_trade', 0):.2f}"],
+        ["Worst Trade", f"${metrics.get('worst_trade', 0):.2f}"],
+        ["Avg Trade Duration (hrs)", f"{metrics.get('avg_duration_hours', 0):.1f}"],
+        
+        # Daily Statistics
+        ["Average Daily Return", f"{metrics.get('avg_return', 0):.4%}"],
+        ["Best Day", f"{metrics.get('best_day', 0):.2%}"],
+        ["Worst Day", f"{metrics.get('worst_day', 0):.2%}"],
+        ["Positive Days", f"{int(metrics.get('positive_days', 0))}"],
+        ["Negative Days", f"{int(metrics.get('negative_days', 0))}"],
+    ]
+    
+    # Create DataFrame
+    df = pd.DataFrame(performance_data, columns=['Metric', 'Value'])
+    df['Strategy'] = strategy_name
+    
+    return df
+
+def save_performance_table(results, strategy_name: str, filepath: str = None):
+    """Save performance table to CSV file."""
+    from config import RESULTS_DIR
+    
+    # Create table
+    table = create_performance_table(results, strategy_name)
+    
+    # Default filepath
+    if filepath is None:
+        filepath = RESULTS_DIR / f"{strategy_name}_performance_metrics.csv"
+    
+    # Save to CSV
+    table.to_csv(filepath, index=False)
+    print(f"📊 Performance metrics saved to: {filepath}")
+    
+    return table
+
+def create_trades_table(results, strategy_name: str = "Strategy") -> pd.DataFrame:
+    """Create detailed trades table for export."""
+    if not results.trades:
+        print("No trades to export")
+        return pd.DataFrame()
+    
+    trades_data = []
+    for i, trade in enumerate(results.trades, 1):
+        duration = (trade.exit_time - trade.entry_time).total_seconds() / 3600  # hours
+        
+        trades_data.append({
+            'Trade #': i,
+            'Strategy': strategy_name,
+            'Entry Time': trade.entry_time.strftime('%Y-%m-%d %H:%M:%S'),
+            'Exit Time': trade.exit_time.strftime('%Y-%m-%d %H:%M:%S'),
+            'Side': trade.side.title(),
+            'Entry Price': f"${trade.entry_price:.4f}",
+            'Exit Price': f"${trade.exit_price:.4f}",
+            'Position Size': f"{trade.position_size:.6f}",
+            'P&L ($)': f"${trade.pnl:.2f}",
+            'P&L (%)': f"{trade.pnl_percent:.2%}",
+            'Commission': f"${trade.commission:.2f}",
+            'Duration (hrs)': f"{duration:.1f}",
+            'Result': 'Win' if trade.pnl > 0 else 'Loss'
+        })
+    
+    return pd.DataFrame(trades_data)
+
+def save_trades_table(results, strategy_name: str, filepath: str = None):
+    """Save trades table to CSV file."""
+    from config import RESULTS_DIR
+    
+    # Create table
+    table = create_trades_table(results, strategy_name)
+    
+    if table.empty:
+        return table
+    
+    # Default filepath
+    if filepath is None:
+        filepath = RESULTS_DIR / f"{strategy_name}_trades_detailed.csv"
+    
+    # Save to CSV
+    table.to_csv(filepath, index=False)
+    print(f"📋 Detailed trades saved to: {filepath}")
+    print(f"Total trades exported: {len(table)}")
+    
+    return table
