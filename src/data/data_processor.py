@@ -50,33 +50,39 @@ class DataProcessor:
             logger.warning("Insufficient data for indicators")
             return df
         
-        # Simple Moving Averages
-        df['sma_20'] = ta.trend.sma_indicator(df['close'], window=20)
-        df['sma_50'] = ta.trend.sma_indicator(df['close'], window=50)
-        
-        # RSI
-        df['rsi'] = ta.momentum.rsi(df['close'], window=14)
-        
-        # Bollinger Bands
-        bb = ta.volatility.BollingerBands(df['close'], window=20, window_dev=2)
-        df['bb_upper'] = bb.bollinger_hband()
-        df['bb_middle'] = bb.bollinger_mavg()
-        df['bb_lower'] = bb.bollinger_lband()
-        
-        # MACD
-        macd = ta.trend.MACD(df['close'])
-        df['macd'] = macd.macd()
-        df['macd_signal'] = macd.macd_signal()
-        df['macd_diff'] = macd.macd_diff()
-        
-        # ATR (for volatility)
-        df['atr'] = ta.volatility.average_true_range(df['high'], df['low'], df['close'])
-        
-        # Volume indicators
-        df['volume_sma'] = df['volume'].rolling(window=20).mean()
+        try:  # ADD ERROR HANDLING
+            # Simple Moving Averages
+            df['sma_20'] = ta.trend.sma_indicator(df['close'], window=20)
+            df['sma_50'] = ta.trend.sma_indicator(df['close'], window=50)
+            
+            # RSI
+            df['rsi'] = ta.momentum.rsi(df['close'], window=14)
+            
+            # Bollinger Bands
+            bb = ta.volatility.BollingerBands(df['close'], window=20, window_dev=2)
+            df['bb_upper'] = bb.bollinger_hband()
+            df['bb_middle'] = bb.bollinger_mavg()
+            df['bb_lower'] = bb.bollinger_lband()
+            
+            # MACD
+            macd = ta.trend.MACD(df['close'])
+            df['macd'] = macd.macd()
+            df['macd_signal'] = macd.macd_signal()
+            df['macd_diff'] = macd.macd_diff()
+            
+            # ATR (for volatility)
+            df['atr'] = ta.volatility.average_true_range(df['high'], df['low'], df['close'])
+            
+            # Volume indicators
+            df['volume_sma'] = df['volume'].rolling(window=20).mean()
+            
+        except Exception as e:
+            logger.error(f"Error calculating indicators: {e}")
+            # Return original data if indicator calculation fails
+            return data
         
         return df
-    
+
     def calculate_returns(self, data: pd.DataFrame) -> pd.DataFrame:
         """Add return calculations."""
         df = data.copy()
