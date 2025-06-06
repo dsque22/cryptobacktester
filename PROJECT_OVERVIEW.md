@@ -57,16 +57,16 @@ The data pipeline is designed to be robust and efficient.
 flowchart LR
     A[Fetch Request] --> B{Cache Check};
     B -- Hit --> C[Load from Parquet];
-    B -- Miss --> D{Fetch from Yahoo Finance};
+    B -- Miss --> D{Fetch from Binance};
     D -- Success --> E[Save to Cache];
-    D -- Failure --> F{Fetch from Binance};
+    D -- Failure --> F{Fetch from Yahoo Finance};
     F -- Success --> E;
     F -- Failure --> G[Error];
     C --> H(Data Processor);
     E --> H;
 ```
 
-*   **Data Sources:** The primary source is Yahoo Finance, with Binance as a fallback, providing redundancy.
+*   **Data Sources:** The primary data source is Binance, with Yahoo Finance used as a fallback, providing redundancy.
 *   **Caching:** Successfully fetched data is stored in the `data/cache` directory as Parquet files. This is a highly efficient columnar storage format that significantly speeds up subsequent data loading. The cache has a configurable expiry time.
 *   **Processing:** The `DataProcessor` cleans the data (handles NaNs, validates prices) and then calculates a standard set of technical indicators and returns. This pre-calculation saves computation time during the backtest.
 
