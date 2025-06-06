@@ -1,4 +1,4 @@
-# Project Overview: Crypto Trading Strategy Backtester v1.0
+# Projects Overview: Crypto Trading Strategy Backtester v1.0
 
 **Note:** This document has been updated to reflect the latest version of the codebase, which focuses on a single, powerful strategy (HMA+WAE) and provides more detailed backtesting results.
 
