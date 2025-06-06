@@ -1,0 +1,22 @@
+Metric,Value,Strategy
+Total Return,-29.95%,HMA_WAE_21_8h
+Annualized Return,-7.21%,HMA_WAE_21_8h
+Total Trades,525,HMA_WAE_21_8h
+Winning Trades,215,HMA_WAE_21_8h
+Losing Trades,310,HMA_WAE_21_8h
+Win Rate,40.95%,HMA_WAE_21_8h
+Sharpe Ratio,-8.01,HMA_WAE_21_8h
+Sortino Ratio,-11.65,HMA_WAE_21_8h
+Calmar Ratio,-0.24,HMA_WAE_21_8h
+Max Drawdown,-29.92%,HMA_WAE_21_8h
+Volatility (Ann.),1.49%,HMA_WAE_21_8h
+Profit Factor,0.69,HMA_WAE_21_8h
+Average Trade,$-5.90,HMA_WAE_21_8h
+Best Trade,$306.38,HMA_WAE_21_8h
+Worst Trade,$-216.73,HMA_WAE_21_8h
+Avg Trade Duration (hrs),8.0,HMA_WAE_21_8h
+Average Daily Return,-0.0339%,HMA_WAE_21_8h
+Best Day,2.52%,HMA_WAE_21_8h
+Worst Day,-1.10%,HMA_WAE_21_8h
+Positive Days,7,HMA_WAE_21_8h
+Negative Days,1039,HMA_WAE_21_8h

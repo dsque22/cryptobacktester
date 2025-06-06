@@ -1,5 +1,6 @@
 """
 Simple configuration for crypto backtester v1.
+Enhanced with better data period management.
 """
 from pathlib import Path
 
@@ -35,7 +36,7 @@ SYMBOLS = {
     'DOGE': 'DOGE-USD'
 }
 
-# Available timeframes - UPDATED
+# Available timeframes
 TIMEFRAMES = {
     '5m': '5m',
     '15m': '15m', 
@@ -49,7 +50,62 @@ TIMEFRAMES = {
     '1m': '1M'  # Note: Binance uses '1M' for 1 month
 }
 
-# Default configuration for different timeframes
+# Available data periods
+DATA_PERIODS = {
+    '1mo': 30,     # 1 month
+    '3mo': 90,     # 3 months
+    '6mo': 180,    # 6 months
+    '1y': 365,     # 1 year
+    '2y': 730,     # 2 years
+    '3y': 1095     # 3 years
+}
+
+# Recommended combinations of timeframe and data period
+# This helps users understand what makes sense for different timeframes
+TIMEFRAME_RECOMMENDATIONS = {
+    '5m': {
+        'recommended_periods': ['1mo', '3mo'],
+        'note': 'High frequency data - shorter periods recommended to avoid excessive data'
+    },
+    '15m': {
+        'recommended_periods': ['1mo', '3mo', '6mo'],
+        'note': 'Good for intraday strategies'
+    },
+    '1h': {
+        'recommended_periods': ['3mo', '6mo', '1y'],
+        'note': 'Balanced for short to medium-term strategies'
+    },
+    '4h': {
+        'recommended_periods': ['6mo', '1y', '2y'],
+        'note': 'Good for swing trading strategies'
+    },
+    '8h': {
+        'recommended_periods': ['6mo', '1y', '2y'],
+        'note': 'Medium-term trend following'
+    },
+    '12h': {
+        'recommended_periods': ['1y', '2y', '3y'],
+        'note': 'Long-term trend analysis'
+    },
+    '1d': {
+        'recommended_periods': ['1y', '2y', '3y'],
+        'note': 'Most common for strategy development'
+    },
+    '3d': {
+        'recommended_periods': ['2y', '3y'],
+        'note': 'Long-term position strategies'
+    },
+    '1w': {
+        'recommended_periods': ['2y', '3y'],
+        'note': 'Very long-term analysis'
+    },
+    '1m': {
+        'recommended_periods': ['3y'],
+        'note': 'Macro trend analysis only'
+    }
+}
+
+# Legacy support - keeping this for backward compatibility but not using in main.py
 TIMEFRAME_PERIODS = {
     '5m': '7d',    # 7 days for 5min data
     '15m': '30d',  # 30 days for 15min data

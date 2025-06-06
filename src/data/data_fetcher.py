@@ -1,5 +1,6 @@
 """
 Data fetching module with Binance primary and Yahoo Finance backup.
+FIXED: Now properly uses the period parameter instead of hardcoded mapping.
 """
 import yfinance as yf
 import pandas as pd
@@ -10,7 +11,7 @@ from typing import Optional, Dict
 import json
 from pathlib import Path
 
-from config import CACHE_DIR, CACHE_EXPIRY_HOURS
+from config import CACHE_DIR, CACHE_EXPIRY_HOURS, DATA_PERIODS
 from utils import setup_logger
 
 logger = setup_logger(__name__)
@@ -37,8 +38,19 @@ class DataFetcher:
         # Check cache first
         cached_data = self._load_from_cache(symbol, interval)
         if cached_data is not None:
-            logger.info(f"Loaded {symbol} from cache")
-            return cached_data
+            # Filter cached data to requested date range
+            start_ts = pd.Timestamp(start_date)
+            end_ts = pd.Timestamp(end_date)
+            
+            # Filter the cached data to the requested range
+            mask = (cached_data.index >= start_ts) & (cached_data.index <= end_ts)
+            filtered_data = cached_data.loc[mask]
+            
+            if len(filtered_data) > 0:
+                logger.info(f"Loaded {symbol} from cache and filtered to {len(filtered_data)} rows")
+                return filtered_data
+            else:
+                logger.info(f"Cache doesn't contain data for requested date range")
         
         # Try Binance first (PRIMARY)
         logger.info(f"Fetching {symbol} from Binance...")
@@ -50,7 +62,7 @@ class DataFetcher:
             data = self._fetch_yahoo(symbol, start_date, end_date, interval)
         
         if data is not None and not data.empty:
-            # Save to cache
+            # Save to cache (save the full dataset, not just the filtered portion)
             self._save_to_cache(symbol, interval, data)
             logger.info(f"Successfully fetched {len(data)} rows for {symbol}")
             return data
@@ -195,33 +207,44 @@ class DataFetcher:
         except Exception as e:
             logger.error(f"Error saving cache: {e}")
 
-# Convenience function
+# FIXED: Convenience function now properly uses the period parameter
 def fetch_crypto_data(symbol: str, period: str = '2y', interval: str = '1d') -> Optional[pd.DataFrame]:
     """
     Simple function to fetch crypto data.
     
     Args:
         symbol: Crypto symbol (e.g., 'BTC-USD')
-        period: Time period (1y, 2y, etc.)
+        period: Time period ('1mo', '3mo', '6mo', '1y', '2y', '3y')
         interval: Time interval (5m, 15m, 1h, 4h, 8h, 12h, 1d, 3d, 1w, 1M)
         
     Returns:
         DataFrame with OHLCV data
     """
-    # Calculate dates
+    # Calculate dates based on the actual period parameter
     end_date = datetime.now()
     
-    period_map = {
-        '1mo': 30,
-        '3mo': 90,
-        '6mo': 180,
-        '1y': 365,
-        '2y': 730,
-        '3y': 1095
-    }
+    # Use the DATA_PERIODS mapping from config
+    if period in DATA_PERIODS:
+        days = DATA_PERIODS[period]
+    else:
+        # Fallback for legacy period formats
+        period_map = {
+            '1mo': 30,
+            '3mo': 90,
+            '6mo': 180,
+            '1y': 365,
+            '2y': 730,
+            '3y': 1095,
+            # Legacy support
+            '7d': 7,
+            '30d': 30,
+            '90d': 90
+        }
+        days = period_map.get(period, 365)
     
-    days = period_map.get(period, 365)
     start_date = end_date - timedelta(days=days)
+    
+    logger.info(f"Fetching data for {symbol} from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')} ({period})")
     
     fetcher = DataFetcher()
     return fetcher.fetch(

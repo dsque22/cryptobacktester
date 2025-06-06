@@ -1,5 +1,6 @@
 """
 Main script demonstrating crypto backtester usage - Hull Strategy Focus.
+Enhanced with easy data period selection.
 """
 import warnings
 warnings.filterwarnings('ignore')
@@ -13,18 +14,25 @@ from src.backtesting import Backtester, calculate_metrics, format_metrics
 from src.backtesting.metrics import save_performance_table, save_trades_table
 from src.visualization import create_performance_report
 from utils import setup_logger
-from config import TIMEFRAMES, TIMEFRAME_PERIODS
+from config import TIMEFRAMES
 
 logger = setup_logger(__name__)
 
 def main():
-    """Run Hull strategy backtest with configurable timeframe."""
+    """Run Hull strategy backtest with configurable timeframe and data period."""
     print("🚀 Crypto Trading Backtester v1.0 - Hull Strategy")
     print("=" * 60)
     
-    # Configuration - EASILY CHANGEABLE
-    SYMBOL = 'BTC-USD'
-    TIMEFRAME = '8h'  # Change this to any timeframe: 5m, 15m, 1h, 4h, 8h, 12h, 1d, 3d, 1w, 1m
+    # ========================= EASY CONFIGURATION =========================
+    # Change these values to customize your backtest
+    SYMBOL = 'BTC-USD'          # Crypto symbol to test
+    TIMEFRAME = '8h'            # Chart timeframe: 5m, 15m, 1h, 4h, 8h, 12h, 1d, 3d, 1w, 1m
+    DATA_PERIOD = '3mo'         # How much historical data to pull
+    
+    # Available DATA_PERIOD options:
+    # '1mo'  = 1 month     | '3mo'  = 3 months    | '6mo'  = 6 months
+    # '1y'   = 1 year      | '2y'   = 2 years     | '3y'   = 3 years
+    # ======================================================================
     
     # Validate timeframe
     if TIMEFRAME not in TIMEFRAMES:
@@ -32,17 +40,40 @@ def main():
         print(f"Available timeframes: {list(TIMEFRAMES.keys())}")
         return
     
-    # Get appropriate period for timeframe
-    period = TIMEFRAME_PERIODS.get(TIMEFRAME, '1y')
+    # Validate data period
+    valid_periods = ['1mo', '3mo', '6mo', '1y', '2y', '3y']
+    if DATA_PERIOD not in valid_periods:
+        print(f"❌ Invalid data period: {DATA_PERIOD}")
+        print(f"Available periods: {valid_periods}")
+        return
     
     print(f"📊 Configuration:")
     print(f"   Symbol: {SYMBOL}")
     print(f"   Timeframe: {TIMEFRAME}")
-    print(f"   Period: {period}")
+    print(f"   Data Period: {DATA_PERIOD}")
+    
+    # Provide recommendations based on timeframe
+    recommended_periods = {
+        '5m': ['1mo', '3mo'],
+        '15m': ['1mo', '3mo', '6mo'],
+        '1h': ['3mo', '6mo', '1y'],
+        '4h': ['6mo', '1y', '2y'],
+        '8h': ['6mo', '1y', '2y'],
+        '12h': ['1y', '2y', '3y'],
+        '1d': ['1y', '2y', '3y'],
+        '3d': ['2y', '3y'],
+        '1w': ['2y', '3y'],
+        '1m': ['3y']
+    }
+    
+    if DATA_PERIOD not in recommended_periods.get(TIMEFRAME, []):
+        recommended = recommended_periods.get(TIMEFRAME, ['1y'])
+        print(f"⚠️  Note: For {TIMEFRAME} timeframe, recommended periods are: {recommended}")
+        print(f"   You selected {DATA_PERIOD} which may provide limited or excessive data.")
     
     # 1. Fetch data
-    print(f"\n📊 Fetching {SYMBOL} data ({TIMEFRAME})...")
-    data = fetch_crypto_data(SYMBOL, period=period, interval=TIMEFRAME)
+    print(f"\n📊 Fetching {SYMBOL} data ({TIMEFRAME}, {DATA_PERIOD})...")
+    data = fetch_crypto_data(SYMBOL, period=DATA_PERIOD, interval=TIMEFRAME)
     
     if data is None or data.empty:
         print("❌ Failed to fetch data. Please check your internet connection.")
@@ -50,6 +81,10 @@ def main():
     
     print(f"✅ Fetched {len(data)} candles of data")
     print(f"📅 Date range: {data.index[0]} to {data.index[-1]}")
+    
+    # Show data summary
+    days_covered = (data.index[-1] - data.index[0]).days
+    print(f"📈 Data summary: {days_covered} days covered")
     
     # 2. Prepare data
     print("\n🔧 Preparing data...")
@@ -84,20 +119,27 @@ def main():
     
     # 6. Export performance metrics table
     print(f"\n📊 Exporting performance metrics...")
-    save_performance_table(result, f"{strategy.name}_{TIMEFRAME}")
+    strategy_name = f"{strategy.name}_{TIMEFRAME}_{DATA_PERIOD}"
+    save_performance_table(result, strategy_name)
     
     # 7. Export trades table
     print(f"\n📋 Exporting trades details...")
-    save_trades_table(result, f"{strategy.name}_{TIMEFRAME}")
+    save_trades_table(result, strategy_name)
     
     # 8. Create visualizations (equity curve only)
     print(f"\n📊 Creating equity curve...")
-    create_performance_report(result, strategy_name=f"{strategy.name}_{TIMEFRAME}")
+    create_performance_report(result, strategy_name=strategy_name)
     
     print(f"\n✅ Backtest complete! Check the results folder for charts.")
     print(f"Strategy: {strategy.name}")
     print(f"Total Trades: {result.total_trades}")
     print(f"Total Return: {result.total_return:.2%}")
+    
+    # Show file outputs
+    print(f"\n📁 Generated files:")
+    print(f"   📊 Performance metrics: results/{strategy_name}_performance_metrics.csv")
+    print(f"   📋 Trade details: results/{strategy_name}_trades_detailed.csv")
+    print(f"   📈 Equity curve: results/{strategy_name}_equity.png")
 
 if __name__ == "__main__":
     main()
