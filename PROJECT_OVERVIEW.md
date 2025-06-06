@@ -78,13 +78,13 @@ The engine follows a simple, vectorized event-driven model. It iterates through 
 graph TD
     A(Start Backtest) --> B{For each Timestamp};
     B --> C{Get Signal from pre-computed Series};
-    C -- Buy/Sell (1 or -1) --> D{Position Open?};
+    C -- "Buy/Sell (1 or -1)" --> D{Position Open?};
     D -- No --> E[Open Position];
-    D -- Yes --> F{Is Signal a Reversal? (e.g. from 1 to -1)};
+    D -- Yes --> F{"Is Signal a Reversal? (e.g. from 1 to -1)"};
     F -- Yes --> G[Close Position];
     G --> E;
     F -- No --> H[Hold Position];
-    C -- Close/Hold (0) --> I{Position Open?};
+    C -- "Close/Hold (0)" --> I{Position Open?};
     I -- Yes --> J[Close Position];
     I -- No --> H[Hold Position];
     J --> B;
