@@ -34,3 +34,31 @@ SYMBOLS = {
     'DOT': 'DOT-USD',
     'DOGE': 'DOGE-USD'
 }
+
+# Available timeframes - UPDATED
+TIMEFRAMES = {
+    '5m': '5m',
+    '15m': '15m', 
+    '1h': '1h',
+    '4h': '4h',
+    '8h': '8h',
+    '12h': '12h',
+    '1d': '1d',
+    '3d': '3d',
+    '1w': '1w',
+    '1m': '1M'  # Note: Binance uses '1M' for 1 month
+}
+
+# Default configuration for different timeframes
+TIMEFRAME_PERIODS = {
+    '5m': '7d',    # 7 days for 5min data
+    '15m': '30d',  # 30 days for 15min data
+    '1h': '90d',   # 90 days for 1hr data
+    '4h': '1y',    # 1 year for 4hr data
+    '8h': '1y',    # 1 year for 8hr data
+    '12h': '2y',   # 2 years for 12hr data
+    '1d': '2y',    # 2 years for daily data
+    '3d': '3y',    # 3 years for 3-day data
+    '1w': '3y',    # 3 years for weekly data
+    '1m': '3y'     # 3 years for monthly data
+}
