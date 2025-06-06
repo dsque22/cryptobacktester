@@ -1,5 +1,5 @@
 """
-Data fetching module with Yahoo Finance primary and Binance backup.
+Data fetching module with Binance primary and Yahoo Finance backup.
 """
 import yfinance as yf
 import pandas as pd
@@ -40,14 +40,14 @@ class DataFetcher:
             logger.info(f"Loaded {symbol} from cache")
             return cached_data
         
-        # Try Yahoo Finance first
-        logger.info(f"Fetching {symbol} from Yahoo Finance...")
-        data = self._fetch_yahoo(symbol, start_date, end_date, interval)
+        # Try Binance first (PRIMARY)
+        logger.info(f"Fetching {symbol} from Binance...")
+        data = self._fetch_binance(symbol, start_date, end_date, interval)
         
         if data is None or data.empty:
-            # Try Binance as fallback
-            logger.info(f"Yahoo failed, trying Binance...")
-            data = self._fetch_binance(symbol, start_date, end_date, interval)
+            # Try Yahoo Finance as fallback
+            logger.info(f"Binance failed, trying Yahoo Finance...")
+            data = self._fetch_yahoo(symbol, start_date, end_date, interval)
         
         if data is not None and not data.empty:
             # Save to cache
@@ -87,13 +87,18 @@ class DataFetcher:
         # Convert symbol format (BTC-USD -> BTCUSDT)
         binance_symbol = symbol.replace('-USD', 'USDT').replace('-', '')
         
-        # Convert interval format
+        # Convert interval format - UPDATED WITH NEW TIMEFRAMES
         interval_map = {
-            '1d': '1d',
+            '5m': '5m',
+            '15m': '15m', 
             '1h': '1h',
             '4h': '4h',
-            '15m': '15m',
-            '5m': '5m'
+            '8h': '8h',
+            '12h': '12h',
+            '1d': '1d',
+            '3d': '3d',
+            '1w': '1w',
+            '1M': '1M'  # 1 month
         }
         
         if interval not in interval_map:
@@ -198,7 +203,7 @@ def fetch_crypto_data(symbol: str, period: str = '2y', interval: str = '1d') -> 
     Args:
         symbol: Crypto symbol (e.g., 'BTC-USD')
         period: Time period (1y, 2y, etc.)
-        interval: Time interval (1d, 1h, etc.)
+        interval: Time interval (5m, 15m, 1h, 4h, 8h, 12h, 1d, 3d, 1w, 1M)
         
     Returns:
         DataFrame with OHLCV data
