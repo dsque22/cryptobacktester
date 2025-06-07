@@ -11,6 +11,7 @@ pyarrow>=10.0.0  # ADD THIS - needed for Parquet files
 
 # Technical analysis
 ta>=0.10.2
+TA-Lib>=0.4.25  # NEW: Required for the advanced HMA-WAE strategy
 
 # Visualization
 matplotlib>=3.7.0

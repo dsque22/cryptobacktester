@@ -1,5 +1,6 @@
 """
-Simple backtesting engine.
+Fixed backtesting engine that properly respects the signals provided.
+This replaces the faulty engine that was generating its own trades.
 """
 import pandas as pd
 import numpy as np
@@ -41,8 +42,8 @@ class BacktestResults:
     max_drawdown: float = 0.0
     sharpe_ratio: float = 0.0
 
-class Backtester:
-    """Simple backtesting engine."""
+class FixedBacktester:
+    """Fixed backtesting engine that properly respects provided signals."""
     
     def __init__(self, 
                  initial_capital: float = 10000,
@@ -68,7 +69,7 @@ class Backtester:
     
     def run(self, data: pd.DataFrame, signals: pd.Series) -> BacktestResults:
         """
-        Run backtest on data with given signals.
+        Run backtest on data with given signals - FIXED VERSION.
         
         Args:
             data: OHLCV data
@@ -79,27 +80,49 @@ class Backtester:
         """
         self.reset()
         
-        for timestamp, signal in signals.items():
-            if timestamp not in data.index:
+        logger.info(f"🔍 FIXED BACKTESTER: Starting with {len(signals)} signals")
+        
+        # Debug: Count signal types
+        long_signals = (signals == 1.0).sum()
+        short_signals = (signals == -1.0).sum()
+        hold_signals = (signals == 0.0).sum()
+        
+        logger.info(f"📊 Signal distribution: {long_signals} long, {short_signals} short, {hold_signals} hold")
+        
+        # Show signal events
+        non_zero_signals = signals[signals != 0.0]
+        logger.info(f"🎯 Signal events: {len(non_zero_signals)}")
+        for date, signal in non_zero_signals.items():
+            signal_type = "LONG" if signal > 0 else "SHORT" if signal < 0 else "EXIT"
+            logger.info(f"   {date}: {signal_type} (signal={signal})")
+        
+        # Process each timestamp
+        for timestamp in data.index:
+            if timestamp not in signals.index:
                 continue
             
             row = data.loc[timestamp]
             current_price = row['close']
+            signal = signals.loc[timestamp]
             
             # Store timestamp
             self.timestamps.append(timestamp)
             
-            # Process signal
-            if signal != 0 and self.position == 0:
-                # Open position
-                self._open_position(timestamp, current_price, signal)
-            elif signal == -self.position:
-                # Close and reverse position
+            # Process signal - FIXED LOGIC
+            if signal == 1.0 and self.position == 0:
+                # LONG entry signal and we're flat
+                self._open_position(timestamp, current_price, 1)
+                logger.info(f"🟢 OPENED LONG: {timestamp} at ${current_price:.2f}")
+                
+            elif signal == -1.0 and self.position == 0:
+                # SHORT entry signal and we're flat
+                self._open_position(timestamp, current_price, -1)
+                logger.info(f"🔴 OPENED SHORT: {timestamp} at ${current_price:.2f}")
+                
+            elif signal == 0.0 and self.position != 0:
+                # Exit signal and we have a position
                 self._close_position(timestamp, current_price)
-                self._open_position(timestamp, current_price, signal)
-            elif signal == 0 and self.position != 0:
-                # Close position
-                self._close_position(timestamp, current_price)
+                logger.info(f"🟠 CLOSED POSITION: {timestamp} at ${current_price:.2f}")
             
             # Update equity
             equity_value = self._calculate_equity(current_price)
@@ -107,24 +130,25 @@ class Backtester:
         
         # Close any remaining position
         if self.position != 0:
-            last_timestamp = signals.index[-1]
+            last_timestamp = data.index[-1]
             last_price = data.loc[last_timestamp, 'close']
             self._close_position(last_timestamp, last_price)
+            logger.info(f"🟠 CLOSED FINAL POSITION: {last_timestamp} at ${last_price:.2f}")
         
         # Create results
         results = self._create_results()
         
-        logger.info(f"Backtest complete: {results.total_trades} trades, "
+        logger.info(f"✅ FIXED BACKTEST COMPLETE: {results.total_trades} trades, "
                    f"{results.total_return:.2%} return")
         
         return results
     
-    def _open_position(self, timestamp: pd.Timestamp, price: float, signal: float):
+    def _open_position(self, timestamp: pd.Timestamp, price: float, direction: int):
         """Open a new position."""
         # Apply slippage
-        if signal > 0:  # Buy
+        if direction > 0:  # Buy (long)
             execution_price = price * (1 + self.slippage)
-        else:  # Sell
+        else:  # Sell (short)
             execution_price = price * (1 - self.slippage)
         
         # Calculate position size and commission
@@ -132,7 +156,7 @@ class Backtester:
         commission = position_value * self.commission_rate
         
         # Update state
-        self.position = 1 if signal > 0 else -1
+        self.position = direction
         self.position_size = (position_value - commission) / execution_price
         self.entry_price = execution_price
         self.entry_time = timestamp
