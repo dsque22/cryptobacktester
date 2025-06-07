@@ -42,7 +42,7 @@ class BacktestResults:
     max_drawdown: float = 0.0
     sharpe_ratio: float = 0.0
 
-class FixedBacktester:
+class Backtester:
     """Fixed backtesting engine that properly respects provided signals."""
     
     def __init__(self, 
@@ -272,3 +272,6 @@ class FixedBacktester:
                 results.profit_factor = float('inf') if total_wins > 0 else 0
         
         return results
+
+# Keep the FixedBacktester alias for backwards compatibility
+FixedBacktester = Backtester
