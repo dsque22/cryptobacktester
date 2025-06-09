@@ -29,6 +29,9 @@ def main():
     TIMEFRAME = '8h'            # Chart timeframe: 5m, 15m, 1h, 4h, 8h, 12h, 1d, 3d, 1w, 1m
     DATA_PERIOD = '1y'         # How much historical data: 1mo, 3mo, 6mo, 1y, 2y, 3y
     
+    # Parameter optimization (set to True to optimize strategy parameters)
+    OPTIMIZE_PARAMETERS = False  # Set to True to run parameter optimization
+    
     # HMA-WAE Strategy Parameters
     STRATEGY_PARAMS = {
         'hma_length': 45,           # Hull Moving Average period
@@ -75,13 +78,45 @@ def main():
         prepared_data = prepare_data(data)
         print(f"✅ Data prepared: {len(prepared_data)} rows with {len(prepared_data.columns)} features")
         
-        # 3. Create strategy
+        # 3. Parameter optimization (if enabled)
+        if OPTIMIZE_PARAMETERS:
+            print(f"\n🔬 Running parameter optimization...")
+            from src.optimization import ParameterOptimizer
+            from src.strategy.strategies import HMAWAEStrategy
+            
+            # Define parameter ranges for optimization
+            param_ranges = {
+                'hma_length': range(20, 50, 10),           # [20, 30, 40]
+                'wae_sensitivity': range(100, 200, 50),    # [100, 150]  
+                'trade_direction': ['long', 'both']        # Test long-only and both
+            }
+            
+            optimizer = ParameterOptimizer(
+                strategy_class=HMAWAEStrategy,
+                data=prepared_data,
+                param_ranges=param_ranges,
+                n_jobs=2
+            )
+            
+            results = optimizer.optimize()
+            
+            print(f"\n📊 Optimization Results:")
+            print(f"   🏆 Best Parameters: {results.best_params}")
+            print(f"   📈 Best Sharpe: {results.best_sharpe:.3f}")
+            print(f"   🎯 Deployment Score: {results.deployment_score:.3f}")
+            print(f"   📋 Recommendation: {results.recommendation}")
+            
+            # Use optimized parameters
+            STRATEGY_PARAMS.update(results.best_params)
+            print(f"✅ Using optimized parameters for backtest")
+        
+        # 4. Create strategy
         print(f"\n🎯 Creating HMA-WAE strategy...")
         strategy = create_hma_wae_strategy(**STRATEGY_PARAMS)
         print(f"✅ Strategy created: {strategy.name}")
         print(f"📋 Trade direction: {STRATEGY_PARAMS['trade_direction'].title()}")
         
-        # 4. Generate signals
+        # 5. Generate signals
         print(f"\n⚡ Generating trading signals...")
         signals = strategy.backtest_prepare(prepared_data)
         
@@ -99,12 +134,12 @@ def main():
             print("⚠️  No trading signals generated. Consider adjusting strategy parameters.")
             return
         
-        # 5. Run backtest
+        # 6. Run backtest
         print(f"\n🔄 Running backtest...")
         backtester = Backtester(**BACKTEST_PARAMS)
         result = backtester.run(prepared_data, signals)
         
-        # 6. Calculate and display results
+        # 7. Calculate and display results
         print(f"\n📊 Backtest Results")
         print("=" * 50)
         
