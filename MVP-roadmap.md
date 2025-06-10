@@ -1,47 +1,61 @@
-# 5-Stage MVP Plan: Parameter Optimization System
+# MVP Roadmap: Advanced HMA-WAE Trading System
 
-## Stage 1: Foundation ✅ COMPLETED
+## System Overview
 
-- ✅ Create `src/optimization/` module structure
-- ✅ Build basic `ParameterOptimizer` class skeleton
-- ✅ Implement simple parameter space definition (dict of ranges)
-- ✅ Add basic grid search generation logic
+This is a **focused, production-ready** cryptocurrency backtesting framework built exclusively around the **Advanced HMA-WAE (Hull Moving Average + Waddah Attar Explosion) Hybrid Trading Strategy**.
 
-## Stage 2: Core Optimization ✅ COMPLETED
+## ✅ COMPLETED: Core System
 
-- ✅ Implement parallel grid search execution
-- ✅ Integrate with existing `Backtester` class  
-- ✅ Add progress tracking and logging
-- ✅ Basic error handling and validation
+### Foundation
+- ✅ Professional modular architecture (`src/` structure)
+- ✅ Multi-source data pipeline (Binance/Yahoo Finance with caching)
+- ✅ Fixed backtesting engine with realistic trading costs
+- ✅ Comprehensive performance metrics (20+ indicators)
 
-## Stage 3: Results & Scoring ✅ COMPLETED
+### HMA-WAE Strategy Implementation
+- ✅ Advanced HMA-WAE strategy matching TradingView Pine Script exactly
+- ✅ Multiple HMA modes (HMA, EHMA, THMA)
+- ✅ Sophisticated WAE momentum confirmation system
+- ✅ Position state tracking preventing consecutive entries
+- ✅ Configurable trade directions (long/short/both)
 
-- ✅ Build deployment scoring algorithm (Sharpe + Win Rate + Drawdown + Stability)
-- ✅ Implement train/test split validation (70/30)
-- ✅ Create results storage and comparison
-- ✅ Add deployment recommendation logic (DEPLOY/TEST_MORE/REJECT)
+### Parameter Optimization System
+- ✅ Parallel grid search optimization
+- ✅ Deployment readiness scoring algorithm
+- ✅ Train/test split validation (70/30)
+- ✅ Automated deployment recommendations (DEPLOY/TEST_MORE/REJECT)
+- ✅ Standalone optimization examples
 
-## Stage 4: Integration ✅ COMPLETED
+### Integration & Testing
+- ✅ Clean main.py workflow
+- ✅ Comprehensive test validation
+- ✅ Professional documentation and usage guides
+- ✅ Results visualization and export
 
-- ✅ Integrate with existing strategy classes
-- ✅ Add to main workflow pipeline
-- ✅ Create simple usage examples (optimize_hma_wae.py)
-- ✅ Test with HMA-WAE strategy optimization
+## 🎯 NEXT: Code Cleanup & Simplification
 
-### Stage 4.1: HMA-WAE Validation ✅ COMPLETED
-- ✅ Create standalone HMA-WAE optimization example
-- ✅ Fix HMA-WAE strategy dependencies if needed
-- ✅ Validate HMA-WAE optimization actually works
-- ✅ Generate real optimization results for HMA-WAE
-- ✅ Document parameter recommendations
+### Objective: Single-Strategy Focus
+Remove all non-HMA-WAE components to create the leanest possible codebase:
 
-## Stage 5: Polish & Documentation ✅ COMPLETED
+- 🗑️ **Remove unused strategies**: SMA, RSI, Bollinger Bands, Legacy HMA-WAE
+- 🗑️ **Remove strategy selection logic**: Only one strategy exists
+- 🧹 **Simplify configuration**: Focus parameters on HMA-WAE only
+- 📝 **Update documentation**: Remove multi-strategy references
 
-- ✅ Add clear console output formatting
-- ✅ Write usage documentation
-- ✅ Performance testing and optimization  
-- ✅ Final integration testing
+### Expected Benefits
+- **~400 fewer lines of code** (from ~1,600 to ~1,200 lines)
+- **Zero confusion** - single strategy to understand
+- **Faster execution** - no unused imports or classes
+- **Focused documentation** - everything HMA-WAE specific
+
+## 🚀 Production Ready
+
+The system is already **production-ready** for HMA-WAE trading with:
+- Realistic trading simulation (commission, slippage, position sizing)
+- Professional-grade optimization with deployment scoring
+- Comprehensive backtesting validation
+- Clean, maintainable codebase architecture
 
 ---
 
-*Each stage builds incrementally and delivers testable functionality.* 
+*This roadmap reflects a mature, focused trading system built around a single, sophisticated strategy rather than a multi-strategy comparison tool.* 

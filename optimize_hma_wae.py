@@ -10,6 +10,8 @@ import numpy as np
 import logging
 from src.optimization import ParameterOptimizer
 from src.strategy.strategies import HMAWAEStrategy
+from src.data import fetch_crypto_data, prepare_data
+from config import SYMBOLS, TIMEFRAMES
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(message)s')
@@ -20,33 +22,30 @@ def optimize_hma_wae():
     print("🎯 HMA-WAE Strategy Parameter Optimization")
     print("=" * 60)
     
-    # 1. Generate realistic crypto data for testing
-    print("📊 Creating realistic crypto test data...")
-    np.random.seed(42)  # Reproducible results
+    # 1. Use the same real market data as main.py
+    print("📊 Fetching real market data (same as main.py)...")
     
-    # Create 6 months of 8h data (realistic timeframe for crypto)
-    dates = pd.date_range('2023-01-01', periods=540, freq='8h')
+    # Configuration matching main.py
+    SYMBOL = 'BTC-USD'
+    TIMEFRAME = '8h'
+    DATA_PERIOD = '1y'
     
-    # Generate realistic price movement with trend and volatility
-    returns = np.random.normal(0.0008, 0.025, len(dates))  # 0.08% per 8h, 2.5% volatility
-    prices = 50000 * np.exp(np.cumsum(returns))
+    print(f"🎯 Symbol: {SYMBOL}")
+    print(f"📅 Timeframe: {TIMEFRAME}")
+    print(f"⏰ Period: {DATA_PERIOD}")
     
-    # Add some realistic market structure
-    high_prices = prices * np.random.uniform(1.005, 1.02, len(dates))
-    low_prices = prices * np.random.uniform(0.98, 0.995, len(dates))
-    open_prices = np.roll(prices, 1)
-    open_prices[0] = prices[0]
+    # Fetch real market data
+    raw_data = fetch_crypto_data(SYMBOL, period=DATA_PERIOD, interval=TIMEFRAME)
+    if raw_data is None or raw_data.empty:
+        print("❌ Failed to fetch market data")
+        return None
+        
+    # Prepare data with technical indicators
+    data = prepare_data(raw_data)
     
-    data = pd.DataFrame({
-        'open': open_prices,
-        'high': high_prices,
-        'low': low_prices,
-        'close': prices,
-        'volume': np.random.uniform(1000, 5000, len(dates))
-    }, index=dates)
-    
-    print(f"✅ Data created: {len(data)} bars")
-    print(f"📈 Price range: ${prices.min():.0f} - ${prices.max():.0f}")
+    print(f"✅ Real market data loaded: {len(data)} bars")
+    print(f"📈 Price range: ${data['close'].min():.0f} - ${data['close'].max():.0f}")
+    print(f"📅 Date range: {data.index[0].strftime('%Y-%m-%d')} to {data.index[-1].strftime('%Y-%m-%d')}")
     
     # 2. Define HMA-WAE parameter optimization space
     print("\n🔧 Defining HMA-WAE parameter space...")

@@ -8,6 +8,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # Run the main backtesting system (HMA-WAE strategy on BTC-USD, 8h timeframe)
 python main.py
 
+# Run parameter optimization for HMA-WAE strategy
+python optimize_hma_wae.py
+
 # Run specific test validation
 python test_fixed_backtester.py
 
@@ -52,6 +55,11 @@ Data Sources (Binance/Yahoo) → Cache (Parquet) → Data Processor → Strategy
 - `metrics.py`: Comprehensive performance analysis (20+ metrics)
 - Realistic simulation with commission, slippage, and position sizing
 
+**Optimization Framework** (`src/optimization/`):
+- `optimizer.py`: Parameter optimization with parallel processing
+- Deployment readiness scoring and validation
+- Grid search with train/test split for parameter tuning
+
 **Visualization** (`src/visualization/`):
 - Professional charts and equity curve generation
 - CSV export for detailed analysis
@@ -64,13 +72,15 @@ Data Sources (Binance/Yahoo) → Cache (Parquet) → Data Processor → Strategy
 
 3. **Data Integrity**: The system validates data quality and handles missing/invalid data gracefully. Cache expiry ensures fresh data when needed.
 
+4. **Parameter Optimization**: The framework includes sophisticated parameter optimization with deployment readiness scoring. Use `optimize_hma_wae.py` for HMA-WAE strategy optimization or the `ParameterOptimizer` class for custom strategies.
+
 ## Strategy Development Patterns
 
-### Adding New Strategies
-1. Inherit from `BaseStrategy` in `src/strategy/base_strategy.py`
-2. Implement `generate_signals()` method returning pandas Series with values: 1 (buy), -1 (sell), 0 (hold)
-3. Add factory function in `strategies.py`
-4. Update `main.py` to use new strategy
+### Modifying the HMA-WAE Strategy
+1. The `HMAWAEStrategy` class inherits from `BaseStrategy` in `src/strategy/base_strategy.py`
+2. The core `generate_signals()` method returns pandas Series with values: 1 (buy), -1 (sell), 0 (hold)
+3. Use the `create_hma_wae_strategy()` factory function for instantiation
+4. Configure parameters in `main.py` via `STRATEGY_PARAMS`
 
 ### Strategy Signal Format
 - Signals must be pandas Series with same index as input data
@@ -78,8 +88,8 @@ Data Sources (Binance/Yahoo) → Cache (Parquet) → Data Processor → Strategy
 - The backtesting engine processes these signals sequentially and manages position state
 
 ### Configuration Patterns
-- Modify `main.py` for symbol/timeframe changes
-- Use factory functions with parameters for strategy customization
+- Modify `main.py` for symbol/timeframe changes and HMA-WAE parameter tuning
+- Use `create_hma_wae_strategy()` factory function with parameters for customization
 - Leverage `config.py` constants for consistent behavior
 
 ## Key Files & Responsibilities
@@ -94,15 +104,14 @@ Data Sources (Binance/Yahoo) → Cache (Parquet) → Data Processor → Strategy
 - `Trade` dataclass: Comprehensive trade record keeping
 - `BacktestResults` dataclass: Complete performance encapsulation
 
-**`src/strategy/strategies.py`**: Strategy implementations
-- `HMAWAEStrategy`: Primary advanced strategy with sophisticated signal logic
-- Alternative strategies: SMA crossover, RSI mean reversion, Bollinger Bands
-- Factory functions for easy instantiation and parameter configuration
+**`src/strategy/strategies.py`**: HMA-WAE Strategy implementation
+- `HMAWAEStrategy`: Advanced HMA-WAE strategy with sophisticated signal logic
+- Factory function for easy instantiation and parameter configuration
 
-**`test_fixed_backtester.py`**: Validation and testing
-- Validates backtesting engine accuracy
-- Compares strategies and provides debugging information
-- Essential for verifying new strategy implementations
+**`test_fixed_backtester.py`**: HMA-WAE validation and testing
+- Validates backtesting engine accuracy with HMA-WAE strategy
+- Provides debugging information for strategy behavior
+- Essential for verifying HMA-WAE strategy implementation
 
 ## Data Management
 
@@ -118,10 +127,10 @@ Data Sources (Binance/Yahoo) → Cache (Parquet) → Data Processor → Strategy
 
 ## Testing & Validation
 
-### Strategy Validation Process
-1. Run `test_fixed_backtester.py` to validate engine behavior
-2. Check signal generation logic matches expected patterns
-3. Verify performance metrics are reasonable for the strategy type
+### HMA-WAE Strategy Validation Process
+1. Run `test_fixed_backtester.py` to validate HMA-WAE strategy behavior
+2. Check signal generation logic matches expected HMA-WAE patterns
+3. Verify performance metrics are reasonable for the HMA-WAE strategy
 4. Compare results against benchmark (buy-and-hold)
 
 ### Common Issues & Debugging
@@ -132,21 +141,22 @@ Data Sources (Binance/Yahoo) → Cache (Parquet) → Data Processor → Strategy
 
 ## File Templates
 
-### New Strategy Template
+### HMA-WAE Parameter Configuration Template
 ```python
-class NewStrategy(BaseStrategy):
-    def __init__(self, param1=default1, param2=default2):
-        super().__init__("NewStrategy")
-        self.param1 = param1
-        self.param2 = param2
-    
-    def generate_signals(self, data: pd.DataFrame) -> pd.Series:
-        signals = pd.Series(0, index=data.index, dtype=float)
-        # Implement signal logic
-        return signals
-
-def create_new_strategy(param1=default1, param2=default2) -> NewStrategy:
-    return NewStrategy(param1=param1, param2=param2)
+# HMA-WAE Strategy Parameters in main.py
+STRATEGY_PARAMS = {
+    'hma_length': 45,           # Hull Moving Average period
+    'hma_mode': 'hma',          # HMA mode: 'hma', 'ehma', 'thma'
+    'fast_length': 20,          # MACD fast EMA period
+    'slow_length': 40,          # MACD slow EMA period
+    'sensitivity': 150,         # WAE sensitivity multiplier
+    'bb_length': 20,            # Bollinger Bands period
+    'bb_mult': 2.0,             # Bollinger Bands multiplier
+    'dz_length': 20,            # Dead Zone length
+    'dz_mult': 3.7,             # Dead Zone multiplier
+    'max_bars_lag': 3,          # Max bars after HMA flip for WAE confirmation
+    'trade_direction': 'long'   # Trading direction: 'long', 'short', 'both'
+}
 ```
 
 ### Results Analysis Pattern
@@ -160,8 +170,9 @@ create_equity_curve_chart(results, filename)
 
 ## Important Notes
 
-- The project has evolved from multi-strategy comparison to focus on the sophisticated HMA-WAE strategy
-- Performance metrics are comprehensive and include risk-adjusted measures
+- This framework is focused exclusively on the sophisticated HMA-WAE strategy
+- Performance metrics are comprehensive and include risk-adjusted measures specifically for HMA-WAE
 - The backtesting engine accounts for realistic trading costs (commission: 0.1%, slippage: 0.05%)
 - Position sizing is fixed at 35% of available capital per trade
 - All timestamps use the data's original timezone (typically UTC for crypto data)
+- The HMA-WAE strategy is designed for lower frequency, higher quality trades

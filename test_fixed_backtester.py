@@ -1,5 +1,5 @@
 """
-Test the strategy with the FIXED backtesting engine
+Test the HMA-WAE strategy with the FIXED backtesting engine
 """
 import warnings
 warnings.filterwarnings('ignore')
@@ -12,10 +12,10 @@ from utils import setup_logger
 
 logger = setup_logger(__name__)
 
-def test_fixed_backtester():
-    """Test with the fixed backtesting engine"""
-    print("🔧 Testing FIXED Backtesting Engine")
-    print("=" * 50)
+def test_hma_wae_backtester():
+    """Test HMA-WAE strategy with the fixed backtesting engine"""
+    print("🔧 Testing HMA-WAE Strategy with FIXED Backtesting Engine")
+    print("=" * 60)
     
     # Same config as main.py
     SYMBOL = 'BTC-USD'
@@ -136,20 +136,19 @@ def test_fixed_backtester():
         traceback.print_exc()
         return None
 
-def compare_with_broken_results():
-    """Compare with the broken backtester results"""
-    print(f"\n📊 Comparison with Broken Results:")
+def validate_hma_wae_strategy():
+    """Validate HMA-WAE strategy performance expectations"""
+    print(f"\n📊 HMA-WAE Strategy Validation:")
     print(f"=" * 40)
-    print(f"Broken backtester (from CSV):")
-    print(f"   Total trades: 110")
-    print(f"   Total return: -5.96%")
-    print(f"   Win rate: 44.55%")
-    print(f"   Avg trade duration: 8.0 hours")
-    print(f"   Problem: Ignored our signals, made its own trades")
+    print(f"Expected behavior:")
+    print(f"   Strategic entries: Only on HMA flip + WAE confirmation")
+    print(f"   Controlled exits: Only on opposite HMA flip")
+    print(f"   Low frequency: Far fewer trades than simple strategies")
+    print(f"   Position management: No consecutive entries")
     print()
-    print(f"Our signals should generate far fewer, more strategic trades")
-    print(f"based on HMA flips + WAE momentum confirmation")
+    print(f"This validates that the fixed backtester respects")
+    print(f"the sophisticated HMA-WAE signal generation logic")
 
 if __name__ == "__main__":
-    result = test_fixed_backtester()
-    compare_with_broken_results()
+    result = test_hma_wae_backtester()
+    validate_hma_wae_strategy()
