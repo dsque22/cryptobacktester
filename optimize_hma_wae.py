@@ -50,12 +50,14 @@ def optimize_hma_wae():
     # 2. Define HMA-WAE parameter optimization space
     print("\n🔧 Defining HMA-WAE parameter space...")
     param_ranges = {
-        'hma_length': [21, 35, 45],                    # Hull MA periods
-        'sensitivity': [100, 150, 200],                # WAE sensitivity levels (correct param name)
-        'trade_direction': ['long', 'both']            # Trading directions
+        'hma_length': list(range(20, 75, 5)),                    # Hull MA periods
+        'sensitivity': list(range(100, 200, 25)),                # WAE sensitivity levels
+        'dz_mult': [3.0, 3.5, 3.7, 4.0, 4.5],                  # Dead zone multiplier (momentum filter)
+        'max_bars_lag': [2, 3, 4, 5],                           # Grace period after HMA flip
+        # 'trade_direction': ['long', 'both', 'short'],           # Trading directions (long-only, both directions, or short-only)
     }
     
-    total_combinations = len(param_ranges['hma_length']) * len(param_ranges['sensitivity']) * len(param_ranges['trade_direction'])
+    total_combinations = len(param_ranges['hma_length']) * len(param_ranges['sensitivity']) * len(param_ranges['dz_mult']) * len(param_ranges['max_bars_lag'])
     print(f"🎲 Parameter combinations: {total_combinations}")
     for param, values in param_ranges.items():
         print(f"   • {param}: {values}")

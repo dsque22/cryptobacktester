@@ -8,13 +8,6 @@ from typing import Dict, Any, Tuple
 import warnings
 warnings.filterwarnings('ignore')
 
-# Try to import talib, fall back to basic implementation if not available
-try:
-    import talib
-    TALIB_AVAILABLE = True
-except ImportError:
-    TALIB_AVAILABLE = False
-    print("Warning: TA-Lib not available. Using basic implementations.")
 
 from .base_strategy import BaseStrategy
 

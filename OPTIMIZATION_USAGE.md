@@ -8,9 +8,9 @@ from src.strategy.strategies import HMAWAEStrategy
 
 # Define parameter ranges
 param_ranges = {
-    'hma_length': [21, 35, 45],
-    'sensitivity': [100, 150, 200], 
-    'trade_direction': ['long', 'both']
+    'hma_length': [21, 35, 45, 55, 60, 75],
+    'sensitivity': [100, 125, 150, 175, 200], 
+    'trade_direction': ['long', 'both',]
 }
 
 # Run optimization
