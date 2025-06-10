@@ -6,13 +6,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Run the main backtesting system (HMA-WAE strategy on BTC-USD, 8h timeframe)
-python main.py
+python3 main.py
 
 # Run parameter optimization for HMA-WAE strategy
-python optimize_hma_wae.py
+python3 optimize_hma_wae.py
 
 # Run specific test validation
-python test_fixed_backtester.py
+python3 test_fixed_backtester.py
 
 # Install dependencies
 pip install -r requirements.txt
