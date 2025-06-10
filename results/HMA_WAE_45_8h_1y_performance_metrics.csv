@@ -1,22 +1,22 @@
 Metric,Value,Strategy
-Total Return,-1.69%,HMA_WAE_45_8h_1y
-Annualized Return,-0.41%,HMA_WAE_45_8h_1y
+Total Return,28.55%,HMA_WAE_45_8h_1y
+Annualized Return,6.87%,HMA_WAE_45_8h_1y
 Total Trades,18,HMA_WAE_45_8h_1y
 Winning Trades,8,HMA_WAE_45_8h_1y
 Losing Trades,10,HMA_WAE_45_8h_1y
 Win Rate,44.44%,HMA_WAE_45_8h_1y
-Sharpe Ratio,-1.15,HMA_WAE_45_8h_1y
-Sortino Ratio,-0.05,HMA_WAE_45_8h_1y
-Calmar Ratio,-0.11,HMA_WAE_45_8h_1y
-Max Drawdown,-3.73%,HMA_WAE_45_8h_1y
-Volatility (Ann.),1.86%,HMA_WAE_45_8h_1y
-Profit Factor,0.77,HMA_WAE_45_8h_1y
-Average Trade,$-23.45,HMA_WAE_45_8h_1y
-Best Trade,$258.26,HMA_WAE_45_8h_1y
-Worst Trade,$-466.20,HMA_WAE_45_8h_1y
-Avg Trade Duration (hrs),8.0,HMA_WAE_45_8h_1y
-Average Daily Return,-0.0016%,HMA_WAE_45_8h_1y
-Best Day,1.13%,HMA_WAE_45_8h_1y
-Worst Day,-1.83%,HMA_WAE_45_8h_1y
-Positive Days,10,HMA_WAE_45_8h_1y
-Negative Days,26,HMA_WAE_45_8h_1y
+Sharpe Ratio,0.65,HMA_WAE_45_8h_1y
+Sortino Ratio,0.69,HMA_WAE_45_8h_1y
+Calmar Ratio,0.55,HMA_WAE_45_8h_1y
+Max Drawdown,-12.50%,HMA_WAE_45_8h_1y
+Volatility (Ann.),9.54%,HMA_WAE_45_8h_1y
+Profit Factor,2.05,HMA_WAE_45_8h_1y
+Average Trade,$396.40,HMA_WAE_45_8h_1y
+Best Trade,$4488.71,HMA_WAE_45_8h_1y
+Worst Trade,$-1502.63,HMA_WAE_45_8h_1y
+Avg Trade Duration (hrs),168.9,HMA_WAE_45_8h_1y
+Average Daily Return,0.0258%,HMA_WAE_45_8h_1y
+Best Day,4.35%,HMA_WAE_45_8h_1y
+Worst Day,-2.94%,HMA_WAE_45_8h_1y
+Positive Days,194,HMA_WAE_45_8h_1y
+Negative Days,203,HMA_WAE_45_8h_1y

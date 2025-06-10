@@ -108,8 +108,11 @@ class Backtester:
             # Store timestamp
             self.timestamps.append(timestamp)
             
-            # Process signal - FIXED LOGIC
-            if signal == 1.0 and self.position == 0:
+            # Process signal - FIXED LOGIC (skip NaN values)
+            if pd.isna(signal):
+                # Skip NaN signals (hold/no action)
+                pass
+            elif signal == 1.0 and self.position == 0:
                 # LONG entry signal and we're flat
                 self._open_position(timestamp, current_price, 1)
                 logger.info(f"🟢 OPENED LONG: {timestamp} at ${current_price:.2f}")
@@ -118,6 +121,18 @@ class Backtester:
                 # SHORT entry signal and we're flat
                 self._open_position(timestamp, current_price, -1)
                 logger.info(f"🔴 OPENED SHORT: {timestamp} at ${current_price:.2f}")
+                
+            elif signal == 1.0 and self.position == -1:
+                # Close short and open long
+                self._close_position(timestamp, current_price)
+                self._open_position(timestamp, current_price, 1)
+                logger.info(f"🔄 FLIPPED TO LONG: {timestamp} at ${current_price:.2f}")
+                
+            elif signal == -1.0 and self.position == 1:
+                # Close long and open short  
+                self._close_position(timestamp, current_price)
+                self._open_position(timestamp, current_price, -1)
+                logger.info(f"🔄 FLIPPED TO SHORT: {timestamp} at ${current_price:.2f}")
                 
             elif signal == 0.0 and self.position != 0:
                 # Exit signal and we have a position

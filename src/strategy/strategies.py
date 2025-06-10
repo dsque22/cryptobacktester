@@ -205,7 +205,7 @@ class HMAWAEStrategy(BaseStrategy):
     
     def generate_signals(self, data: pd.DataFrame) -> pd.Series:
         """Generate HMA-WAE hybrid signals matching TradingView Pine Script exactly"""
-        signals = pd.Series(0.0, index=data.index, dtype=float)
+        signals = pd.Series(np.nan, index=data.index, dtype=float)
         
         # Check if we have enough data for HMA calculation
         min_required_bars = self.hma_length + 10  # Add buffer
@@ -292,7 +292,7 @@ class HMAWAEStrategy(BaseStrategy):
         current_position = 0  # 0 = flat, 1 = long, -1 = short
         
         for i in range(len(data)):
-            current_signal = 0.0
+            # Don't initialize current_signal - only set when there's an actual signal
             
             # Entry conditions - ONLY when position is flat (position_size == 0)
             if current_position == 0:  # No position currently
@@ -300,34 +300,32 @@ class HMAWAEStrategy(BaseStrategy):
                 # Long entry condition
                 if (self.trade_direction in ["both", "long"] and 
                     wae_confirm_long.iloc[i]):
-                    current_signal = 1.0
+                    signals.iloc[i] = 1.0
                     current_position = 1
                     print(f"🟢 LONG ENTRY: {data.index[i]}")
                 
                 # Short entry condition  
                 elif (self.trade_direction in ["both", "short"] and 
                       wae_confirm_short.iloc[i]):
-                    current_signal = -1.0
+                    signals.iloc[i] = -1.0
                     current_position = -1
                     print(f"🔴 SHORT ENTRY: {data.index[i]}")
             
-            # Exit conditions - ONLY when we have a position
+            # Exit conditions - ONLY when we have a position AND opposite HMA flip occurs
             elif current_position != 0:
                 
-                # Long exit condition (HMA flip down)
+                # Long exit condition (HMA flips down - trend reversal)
                 if (current_position > 0 and hull_flip_down.iloc[i]):
-                    current_signal = 0.0
+                    signals.iloc[i] = 0.0  # Close long position
                     current_position = 0
                     print(f"🟠 LONG EXIT: {data.index[i]}")
                 
-                # Short exit condition (HMA flip up)
+                # Short exit condition (HMA flips up - trend reversal)
                 elif (current_position < 0 and hull_flip_up.iloc[i]):
-                    current_signal = 0.0
+                    signals.iloc[i] = 0.0  # Close short position
                     current_position = 0
                     print(f"🟠 SHORT EXIT: {data.index[i]}")
-            
-            # Set the signal for this bar
-            signals.iloc[i] = current_signal
+                # If we have a position but no exit condition, leave signal as 0.0 (initialized default)
         
         # Count and log final signals
         final_long_entries = (signals == 1.0).sum()
