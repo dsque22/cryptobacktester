@@ -25,8 +25,8 @@ def main():
     
     # ========================= CONFIGURATION =========================
     # Change these values to customize your backtest
-    SYMBOL = 'BTC-USD'          # Crypto symbol to test
-    TIMEFRAME = '8h'            # Chart timeframe: 5m, 15m, 1h, 4h, 8h, 12h, 1d, 3d, 1w, 1m
+    SYMBOL = 'XRP-USD'          # Crypto symbol to test
+    TIMEFRAME = '12h'            # Chart timeframe: 5m, 15m, 1h, 4h, 8h, 12h, 1d, 3d, 1w, 1m
     DATA_PERIOD = '1y'         # How much historical data: 1mo, 3mo, 6mo, 1y, 2y, 3y
     
     # Parameter optimization (set to True to optimize strategy parameters)
@@ -34,7 +34,7 @@ def main():
     
     # HMA-WAE Strategy Parameters
     STRATEGY_PARAMS = {
-        'hma_length': 45,           # Hull Moving Average period
+        'hma_length': 55,           # Hull Moving Average period
         'hma_mode': 'hma',          # HMA mode: 'hma', 'ehma', 'thma'
         'fast_length': 20,          # MACD fast EMA period
         'slow_length': 40,          # MACD slow EMA period
@@ -168,7 +168,8 @@ def main():
                       f"Duration: {duration:.1f}h")
         
         # 7. Export results
-        strategy_name = f"{strategy.name}_{TIMEFRAME}_{DATA_PERIOD}"
+        symbol_short = SYMBOL.split('-')[0]
+        strategy_name = f"{strategy.name}_{symbol_short}_{TIMEFRAME}_{DATA_PERIOD}"
         print(f"\n💾 Exporting results...")
         
         # Save performance metrics

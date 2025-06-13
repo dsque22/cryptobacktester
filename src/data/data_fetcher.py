@@ -38,19 +38,21 @@ class DataFetcher:
         # Check cache first
         cached_data = self._load_from_cache(symbol, interval)
         if cached_data is not None:
-            # Filter cached data to requested date range
             start_ts = pd.Timestamp(start_date)
             end_ts = pd.Timestamp(end_date)
             
-            # Filter the cached data to the requested range
-            mask = (cached_data.index >= start_ts) & (cached_data.index <= end_ts)
-            filtered_data = cached_data.loc[mask]
+            # Check if cache contains the complete requested date range
+            cache_covers_start = cached_data.index[0] <= start_ts
+            cache_covers_end = cached_data.index[-1] >= end_ts
             
-            if len(filtered_data) > 0:
+            if cache_covers_start and cache_covers_end:
+                # Filter cached data to requested date range
+                mask = (cached_data.index >= start_ts) & (cached_data.index <= end_ts)
+                filtered_data = cached_data.loc[mask]
                 logger.info(f"Loaded {symbol} from cache and filtered to {len(filtered_data)} rows")
                 return filtered_data
             else:
-                logger.info(f"Cache doesn't contain data for requested date range")
+                logger.info(f"Cache doesn't contain complete date range. Need: {start_date} to {end_date}, Have: {cached_data.index[0].date()} to {cached_data.index[-1].date()}")
         
         # Try Binance first (PRIMARY)
         logger.info(f"Fetching {symbol} from Binance...")

@@ -176,3 +176,9 @@ create_equity_curve_chart(results, filename)
 - Position sizing is fixed at 35% of available capital per trade
 - All timestamps use the data's original timezone (typically UTC for crypto data)
 - The HMA-WAE strategy is designed for lower frequency, higher quality trades
+
+# important-instruction-reminders
+Do what has been asked; nothing more, nothing less.
+NEVER create files unless they're absolutely necessary for achieving your goal.
+ALWAYS prefer editing an existing file to creating a new one.
+NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
