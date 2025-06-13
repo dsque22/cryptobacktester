@@ -27,7 +27,7 @@ def optimize_hma_wae():
     
     # Configuration matching main.py
     SYMBOL = 'BTC-USD'
-    TIMEFRAME = '8h'
+    TIMEFRAME = '12h'
     DATA_PERIOD = '1y'
     
     print(f"🎯 Symbol: {SYMBOL}")
@@ -52,9 +52,9 @@ def optimize_hma_wae():
     param_ranges = {
         'hma_length': list(range(20, 75, 5)),                    # Hull MA periods
         'sensitivity': list(range(100, 200, 25)),                # WAE sensitivity levels
-        'dz_mult': [3.0, 3.5, 3.7, 4.0, 4.5],                  # Dead zone multiplier (momentum filter)
-        'max_bars_lag': [2, 3, 4, 5],                           # Grace period after HMA flip
-        # 'trade_direction': ['long', 'both', 'short'],           # Trading directions (long-only, both directions, or short-only)
+        'dz_mult': [i / 10 for i in range(30, 40)],                  # Dead zone multiplier (momentum filter)
+        'max_bars_lag': [2, 3, 4,],                           # Grace period after HMA flip
+        'trade_direction': ['long'],           # Trading directions (long-only, both directions, or short-only)
     }
     
     total_combinations = len(param_ranges['hma_length']) * len(param_ranges['sensitivity']) * len(param_ranges['dz_mult']) * len(param_ranges['max_bars_lag'])

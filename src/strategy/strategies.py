@@ -58,6 +58,9 @@ class HMAWAEStrategy(BaseStrategy):
         self.dz_mult = dz_mult
         self.max_bars_lag = max_bars_lag
         self.trade_direction = trade_direction.lower()
+        
+        # Parameter validation logging (minimal)
+        print(f"🔧 HMA: {self.hma_length}, Sens: {self.sensitivity}")
     
     def wma(self, data: pd.Series, length: int) -> pd.Series:
         """Weighted Moving Average - Fixed calculation"""

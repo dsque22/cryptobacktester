@@ -25,12 +25,12 @@ def main():
     
     # ========================= CONFIGURATION =========================
     # Change these values to customize your backtest
-    SYMBOL = 'XRP-USD'          # Crypto symbol to test
+    SYMBOL = 'BTC-USD'          # Crypto symbol to test
     TIMEFRAME = '12h'            # Chart timeframe: 5m, 15m, 1h, 4h, 8h, 12h, 1d, 3d, 1w, 1m
     DATA_PERIOD = '1y'         # How much historical data: 1mo, 3mo, 6mo, 1y, 2y, 3y
     
     # Parameter optimization (set to True to optimize strategy parameters)
-    OPTIMIZE_PARAMETERS = False  # Set to True to run parameter optimization
+    OPTIMIZE_PARAMETERS = True  # Set to True to run parameter optimization
     
     # HMA-WAE Strategy Parameters
     STRATEGY_PARAMS = {
@@ -84,11 +84,11 @@ def main():
             from src.optimization import ParameterOptimizer
             from src.strategy.strategies import HMAWAEStrategy
             
-            # Define parameter ranges for optimization
+            # Define parameter ranges for optimization (final validation)
             param_ranges = {
-                'hma_length': range(20, 50, 10),           # [20, 30, 40]
-                'wae_sensitivity': range(100, 200, 50),    # [100, 150]  
-                'trade_direction': ['long', 'both']        # Test long-only and both
+                'hma_length': [20, 30, 40, 55],            # Test range including good params
+                'sensitivity': [100, 150],                 # Test sensitivity range
+                'trade_direction': ['long']                # Test long-only first
             }
             
             optimizer = ParameterOptimizer(

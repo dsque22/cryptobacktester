@@ -286,6 +286,12 @@ class Backtester:
             else:
                 results.profit_factor = float('inf') if total_wins > 0 else 0
         
+        # Calculate Sharpe ratio and max drawdown (missing in optimizer)
+        if len(results.returns) > 1:
+            from utils import calculate_sharpe_ratio, calculate_max_drawdown
+            results.sharpe_ratio = calculate_sharpe_ratio(results.returns)
+            results.max_drawdown = calculate_max_drawdown(results.equity_curve)
+        
         return results
 
 # Keep the FixedBacktester alias for backwards compatibility

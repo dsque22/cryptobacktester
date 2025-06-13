@@ -1,0 +1,22 @@
+Metric,Value,Strategy
+Total Return,11.42%,HMA_WAE_40_BTC_12h_1y
+Annualized Return,4.22%,HMA_WAE_40_BTC_12h_1y
+Total Trades,11,HMA_WAE_40_BTC_12h_1y
+Winning Trades,5,HMA_WAE_40_BTC_12h_1y
+Losing Trades,6,HMA_WAE_40_BTC_12h_1y
+Win Rate,45.45%,HMA_WAE_40_BTC_12h_1y
+Sharpe Ratio,0.35,HMA_WAE_40_BTC_12h_1y
+Sortino Ratio,0.35,HMA_WAE_40_BTC_12h_1y
+Calmar Ratio,0.30,HMA_WAE_40_BTC_12h_1y
+Max Drawdown,-14.00%,HMA_WAE_40_BTC_12h_1y
+Volatility (Ann.),11.21%,HMA_WAE_40_BTC_12h_1y
+Profit Factor,1.45,HMA_WAE_40_BTC_12h_1y
+Average Trade,$257.60,HMA_WAE_40_BTC_12h_1y
+Best Trade,$3865.82,HMA_WAE_40_BTC_12h_1y
+Worst Trade,$-2208.80,HMA_WAE_40_BTC_12h_1y
+Avg Trade Duration (hrs),258.5,HMA_WAE_40_BTC_12h_1y
+Average Daily Return,0.0183%,HMA_WAE_40_BTC_12h_1y
+Best Day,5.68%,HMA_WAE_40_BTC_12h_1y
+Worst Day,-3.96%,HMA_WAE_40_BTC_12h_1y
+Positive Days,123,HMA_WAE_40_BTC_12h_1y
+Negative Days,125,HMA_WAE_40_BTC_12h_1y

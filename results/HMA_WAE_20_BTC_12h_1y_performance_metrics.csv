@@ -1,0 +1,22 @@
+Metric,Value,Strategy
+Total Return,-8.32%,HMA_WAE_20_BTC_12h_1y
+Annualized Return,-3.08%,HMA_WAE_20_BTC_12h_1y
+Total Trades,21,HMA_WAE_20_BTC_12h_1y
+Winning Trades,7,HMA_WAE_20_BTC_12h_1y
+Losing Trades,14,HMA_WAE_20_BTC_12h_1y
+Win Rate,33.33%,HMA_WAE_20_BTC_12h_1y
+Sharpe Ratio,-0.42,HMA_WAE_20_BTC_12h_1y
+Sortino Ratio,-0.17,HMA_WAE_20_BTC_12h_1y
+Calmar Ratio,-0.18,HMA_WAE_20_BTC_12h_1y
+Max Drawdown,-16.97%,HMA_WAE_20_BTC_12h_1y
+Volatility (Ann.),11.35%,HMA_WAE_20_BTC_12h_1y
+Profit Factor,0.75,HMA_WAE_20_BTC_12h_1y
+Average Trade,$-99.04,HMA_WAE_20_BTC_12h_1y
+Best Trade,$3256.49,HMA_WAE_20_BTC_12h_1y
+Worst Trade,$-1416.44,HMA_WAE_20_BTC_12h_1y
+Avg Trade Duration (hrs),117.1,HMA_WAE_20_BTC_12h_1y
+Average Daily Return,-0.0102%,HMA_WAE_20_BTC_12h_1y
+Best Day,5.71%,HMA_WAE_20_BTC_12h_1y
+Worst Day,-4.89%,HMA_WAE_20_BTC_12h_1y
+Positive Days,108,HMA_WAE_20_BTC_12h_1y
+Negative Days,118,HMA_WAE_20_BTC_12h_1y
